@@ -13,11 +13,13 @@ const userSchema = new Schema({
     required: true
   },
   phoneNumber: {
-    type: String,
+    type: Number,
+    unique: true,
     required: true
   },
   email: {
     type: String,
+    unique: true,
     required: true
   },
   password: {
