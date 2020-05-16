@@ -1,13 +1,14 @@
 {
-  "name": "js-starter",
+  "name": "EdukoLab",
   "version": "0.0.1",
-  "description": "A boilerplate for starting js code",
+  "description": "An educational app...",
+
   "keywords": [
     "js-starter",
     "boilerplate"
   ],
   "private": false,
-  "main": "nodemon.json",
+  "main": "server.js",
   "types": "dist/index.d.ts",
   "directories": {
     "test": "__tests__"
@@ -57,5 +58,8 @@
   },
   "browserslist": [
     "last 1 Chrome versions"
-  ]
+  ],
+  "engines": {
+    "node": "12.x"
+  }
 }
