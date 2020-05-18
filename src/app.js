@@ -7,8 +7,11 @@ const app = express();
 
 const authRoutes = require('./routes/auth');
 
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${
+  process.env.MONGO_PASSWORD
+}@cluster0-pcodi.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
-mongoose.connect(`mongodb+srv://test-user:${process.env.MONGO_ATLAS_PW}@cluster0-pcodi.mongodb.net/test?retryWrites=true&w=majority`, { userNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MONGODB_URI, { userNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
