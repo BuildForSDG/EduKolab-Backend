@@ -12,16 +12,18 @@ exports.signup = (req, res, next) => {
     error.data = errors.array();
     throw error;
   }
+  const { fullName } = req.body;
+  const { phoneNumber } = req.body;
   const { email } = req.body;
-  const { name } = req.body;
   const { password } = req.body;
   bcrypt
     .hash(password, 12)
     .then((hashedPw) => {
       const user = new User({
+        fullName,
+        phoneNumber,
         email,
-        password: hashedPw,
-        name
+        password: hashedPw
       });
       return user.save();
     })

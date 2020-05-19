@@ -9,6 +9,15 @@ const router = express.Router();
 router.post(
   '/signup',
   [
+    body('fullName')
+      .trim()
+      .not()
+      .isEmpty(),
+    body('phoneNumber')
+      .trim()
+      .not()
+      .isLength({ min: 9 })
+      .isEmpty(),
     body('email')
       .isEmail()
       .withMessage('Please enter a valid email.')
@@ -22,11 +31,7 @@ router.post(
       .normalizeEmail(),
     body('password')
       .trim()
-      .isLength({ min: 5 }),
-    body('name')
-      .trim()
-      .not()
-      .isEmpty()
+      .isLength({ min: 5 })
   ],
   authController.signup
 );
