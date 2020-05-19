@@ -15,9 +15,8 @@ router.post(
       .isEmpty(),
     body('phoneNumber')
       .trim()
-      .not()
       .isLength({ min: 9 })
-      .isEmpty(),
+      .notEmpty(),
     body('email')
       .isEmail()
       .withMessage('Please enter a valid email.')
