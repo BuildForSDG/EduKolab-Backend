@@ -2,6 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { body } = require('express-validator');
 
 const app = express();
 
@@ -11,11 +12,16 @@ const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${
   process.env.MONGO_PASSWORD
 }@cluster0-pcodi.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
-mongoose.connect(MONGODB_URI, { userNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+});
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(body());
 
 // eslint-disable-next-line consistent-return
 app.use((request, response, next) => {

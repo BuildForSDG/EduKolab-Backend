@@ -15,10 +15,18 @@ router.post(
       .isEmpty(),
     body('phoneNumber')
       .trim()
-      .isLength({ min: 9 })
+      .isLength({ min: 9 }).withMessage('Phone Number must be 9 characters.')
+      // eslint-disable-next-line consistent-return
+      .custom((value) => User.findOne({ phoneNumber: value }).then((userDoc) => {
+        if (userDoc) {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          return Promise.reject('Phone Number already exists');
+        }
+      }))
       .notEmpty(),
-    body('email')
+    body('email', 'Email address is mandatory!')
       .isEmail()
+      .trim()
       .withMessage('Please enter a valid email.')
       // eslint-disable-next-line no-unused-vars,consistent-return
       .custom((value) => User.findOne({ email: value }).then((userDoc) => {
@@ -28,9 +36,11 @@ router.post(
         }
       }))
       .normalizeEmail(),
-    body('password')
+    body('password', 'Password is mandatory!')
       .trim()
-      .isLength({ min: 5 })
+      .isLength({ min: 6 })
+      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/, 'i')
+      .withMessage('Password must contain at least a capital letter.')
   ],
   authController.signup
 );

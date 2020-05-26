@@ -1,21 +1,28 @@
-const { validationResult } = require('express-validator/check');
+const { body } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-exports.signup = (req, res, next) => {
-  const errors = validationResult(req);
+exports.signup = (request, response, next) => {
+  const errors = body(request);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
     error.statusCode = 400;
     error.data = errors.array();
     throw error;
   }
-  const { fullName } = req.body;
-  const { phoneNumber } = req.body;
-  const { email } = req.body;
-  const { password } = req.body;
+  const { fullName } = request.body;
+  const { phoneNumber } = request.body;
+  const { email } = request.body;
+  const { password } = request.body;
+  const { confirmPassword } = request.body;
+
+  if (confirmPassword !== password) {
+    const error = new Error('Password does not match');
+    error.statusCode = 400;
+    throw error;
+  }
   bcrypt
     .hash(password, 12)
     .then((hashedPw) => {
@@ -23,13 +30,14 @@ exports.signup = (req, res, next) => {
         fullName,
         phoneNumber,
         email,
-        password: hashedPw
+        password: hashedPw,
+        confirmPassword
       });
       return user.save();
     })
     .then((result) => {
       // eslint-disable-next-line no-underscore-dangle
-      res.status(201).json({ message: 'User created!', userId: result._id });
+      response.status(201).json({ message: 'User created!', userId: result._id });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -39,11 +47,12 @@ exports.signup = (req, res, next) => {
     });
 };
 
-exports.login = (req, res, next) => {
-  const { email } = req.body;
-  const { password } = req.body;
+exports.login = (request, response, next) => {
+  const { email } = request.body;
+  const { phoneNumber } = request.body;
+  const { password } = request.body;
   let loadedUser;
-  User.findOne({ email })
+  User.findOne({ email } || { phoneNumber })
     .then((user) => {
       if (!user) {
         const error = new Error('A user with this email could not be found.');
@@ -69,7 +78,7 @@ exports.login = (req, res, next) => {
         { expiresIn: '1h' }
       );
       // eslint-disable-next-line no-underscore-dangle
-      res.status(200).json({ token, userId: loadedUser._id.toString() });
+      response.status(200).json({ userId: loadedUser._id.toString(), token });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -78,3 +87,5 @@ exports.login = (req, res, next) => {
       next(err);
     });
 };
+
+// Validation Function
