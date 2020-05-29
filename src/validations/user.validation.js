@@ -2,14 +2,15 @@ const Joi = require('@hapi/joi');
 const { password, objectId } = require('./custom.validation');
 
 const createUser = {
-  body: Joi.object().keys({
+  body: Joi.object({
     fullName: Joi.string().required(),
-    phoneNumber: Joi.string().regex(/^\d{11}$/).required(),
+    phoneNumber: Joi.string().min(11).required(),
     email: Joi.string().required().email(),
-    password: Joi.string().min(6).required().custom(password).strict(),
+    password: Joi.string().min(7).required().strict(),
     confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict(),
     userType: Joi.string().required()
   })
+    .unknown(true)
 };
 
 const getUsers = {

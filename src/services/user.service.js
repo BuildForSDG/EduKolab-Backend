@@ -9,6 +9,9 @@ const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
+  if (userBody.password !== userBody.confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Password does not match');
+  }
   const user = await User.create(userBody);
   return user;
 };
@@ -27,10 +30,14 @@ const queryUsers = async (filter, options) => {
 const getUserById = async (id) => User.findById(id);
 
 /**
- * Get user by email or Phone Number
+ * Get user by email
  */
-// eslint-disable-next-line max-len
-const getUserByEmailOrPhoneNumber = async (email, phoneNumber) => User.findOne({ email } || { phoneNumber });
+const getUserByEmail = async (email) => User.findOne({ email });
+
+/**
+ * Get user by phoneNumber
+ */
+const getUserByPhoneNumber = async (phoneNumber) => User.findOne({ phoneNumber });
 
 /**
  * Update user by id
@@ -41,7 +48,10 @@ const updateUserById = async (userId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email is already taken');
+  }
+  if (updateBody.phoneNumber && (await User.isPhoneNumberTaken(updateBody.phoneNumber, userId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Phone Number is already taken');
   }
   Object.assign(user, updateBody);
   await user.save();
@@ -64,7 +74,8 @@ module.exports = {
   createUser,
   queryUsers,
   getUserById,
-  getUserByEmailOrPhoneNumber,
+  getUserByEmail,
+  getUserByPhoneNumber,
   updateUserById,
   deleteUserById
 };

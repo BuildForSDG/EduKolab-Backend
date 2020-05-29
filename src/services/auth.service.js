@@ -8,7 +8,7 @@ const ApiError = require('../utils/ApiError');
  * Login with email, phoneNumber and password
  */
 const loginUserWithEmailAndPassword = async (email, phoneNumber, password) => {
-  const user = await userService.getUserByEmailOrPhoneNumber(email, phoneNumber);
+  const user = await userService.getUserByEmail(email);
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }

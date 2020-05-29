@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema(
       trim: true
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
       trim: true
@@ -62,6 +62,11 @@ userSchema.plugin(paginate);
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
+userSchema.statics.isPhoneNumberTaken = async function (phoneNumber, excludeUserId) {
+  const user = await this.findOne({ phoneNumber, _id: { $ne: excludeUserId } });
   return !!user;
 };
 

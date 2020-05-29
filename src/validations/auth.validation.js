@@ -15,7 +15,6 @@ const register = {
 const login = {
   body: Joi.object().keys({
     email: Joi.string().required(),
-    phoneNumber: Joi.string().regex(/^\d{11}$/).required(),
     password: Joi.string().required()
   })
 };
