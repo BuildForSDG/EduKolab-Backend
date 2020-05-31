@@ -27,17 +27,16 @@ const queryUsers = async (filter, options) => {
 /**
  * Get user by id
  */
-const getUserById = async (id) => User.findById(id);
+const getUserById = async (id) => {
+  return User.findById(id);
+};
 
 /**
  * Get user by email
  */
-const getUserByEmail = async (email) => User.findOne({ email });
-
-/**
- * Get user by phoneNumber
- */
-const getUserByPhoneNumber = async (phoneNumber) => User.findOne({ phoneNumber });
+const getUserByEmail = async (email) => {
+  return User.findOne({ email });
+};
 
 /**
  * Update user by id
@@ -75,7 +74,6 @@ module.exports = {
   queryUsers,
   getUserById,
   getUserByEmail,
-  getUserByPhoneNumber,
   updateUserById,
   deleteUserById
 };
