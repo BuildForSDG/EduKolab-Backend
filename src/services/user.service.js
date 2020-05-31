@@ -32,7 +32,7 @@ const getUserById = async (id) => {
 };
 
 /**
- * Get user by email
+ * Get user by emails
  */
 const getUserByEmail = async (email) => {
   return User.findOne({ email });
