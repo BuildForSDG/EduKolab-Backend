@@ -1,27 +1,26 @@
-const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
-const config = require('./config');
-const { User } = require('../models');
+// Module imports
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 
-const jwtOptions = {
-  secretOrKey: config.jwt.secret,
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-};
+// Model imports
+const Users = require('../models/Users');
 
-// eslint-disable-next-line consistent-return
-const jwtVerify = async (payload, done) => {
-  try {
-    const user = await User.findById(payload.sub);
-    if (!user) {
-      return done(null, false);
+// Passport setup
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'user[email]',
+      passwordField: 'user[password]'
+    },
+    (email, password, done) => {
+      Users.findOne({ email })
+        .then((user) => {
+          if (!user || !user.validatePassword(password)) {
+            return done(null, false, { errors: { 'email or password': 'is invalid' } });
+          }
+          return done(null, user);
+        })
+        .catch(done);
     }
-    done(null, user);
-  } catch (error) {
-    done(error, false);
-  }
-};
-
-const jwtStrategy = new JwtStrategy(jwtOptions, jwtVerify);
-
-module.exports = {
-  jwtStrategy
-};
+  )
+);
