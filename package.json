@@ -1,14 +1,12 @@
 {
-  "name": "js-starter",
+  "name": "edukolab-api",
   "version": "0.0.1",
-  "description": "A boilerplate for starting js code",
+  "description": "employment opportunities for teachers",
   "keywords": [
-    "js-starter",
-    "boilerplate"
+    "edukolab-frontend"
   ],
   "private": false,
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/app.js",
   "directories": {
     "test": "__tests__"
   },
@@ -16,34 +14,57 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cover": "jest --coverage",
-    "lint": "eslint \"src/**/*.js\"",
-    "start": "parcel ./src/index.html"
+    "lint": "eslint \"src/**/*.js\" || false",
+    "check": "npm run lint && npm test",
+    "start": "node app.js",
+    "predev": "npm run check",
+    "dev": "nodemon app.js"
   },
+  "pre-commit": "check",
   "author": {
     "name": "Build For SDG",
     "email": "buildforsdg@andela.com"
   },
-  "homepage": "https://github.com/BuildForSDG/js-starter#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BuildForSDG/js-starter.git"
+    "url": "https://github.com/BuildForSDG/edukolab-backend.git"
   },
   "bugs": {
-    "url": "https://github.com/BuildForSDG/js-starter/issues"
+    "url": "https://github.com/BuildForSDG/edukolab-backend/issues"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "cors": "2.8.5",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.0.0",
+    "dotenv": "^8.2.0",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-form-data": "^2.0.12",
+    "express-jwt": "^5.3.1",
+    "express-session": "^1.16.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.14",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.1",
+    "nodemailer": "^6.2.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "validator": "^13.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
-    "babel-jest": "^25.4.0",
+    "babel-jest": "^25.5.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
     "jest": "^25.4.0",
-    "parcel-bundler": "^1.12.4"
-  },
-  "browserslist": [
-    "last 1 Chrome versions"
-  ]
+    "nodemon": "^2.0.4",
+    "pre-commit": "^1.2.2",
+    "supertest": "^4.0.2"
+  }
 }

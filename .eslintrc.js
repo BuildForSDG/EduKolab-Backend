@@ -5,7 +5,7 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: ['airbnb-base'],
+  extends: ['airbnb-base', 'eslint:recommended'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
@@ -16,6 +16,15 @@ module.exports = {
   },
   rules: {
     'comma-dangle': ['error', 'never'],
-    'no-param-reassign': ['error', { props: false }]
+    'no-param-reassign': ['error', { props: false }],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'always',
+        mjs: 'never',
+        jsx: 'never'
+      }
+    ]
   }
 };
