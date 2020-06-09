@@ -21,17 +21,27 @@ types:
         type: string
         example: "123 Fulton Avenue"
     Age:
+        description: A valid age
         type: integer
         minimum: 18
         format: int8
-        multipleOf: 1
         example: 19
+    Application:
+        description: A teacher's application for a job
+        type: object
+        properties:
+          id: ID
+          jobID: ID
+          owner: Teacher
     CareerInterest:
+        description: Schools and subjects a teacher will like to teach at and teach respectively in a new job
         type: object
         properties:
             schoolNames?: SchoolName[]
             subjects?: SubjectTaught[]
-    CurrentEmployments: Employment[]
+    CurrentEmployments:
+        description: Teacher's current employment
+        type: Employment[]
     Disability:
         description: A user's disability
         type: string
@@ -42,30 +52,30 @@ types:
         pattern: ^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$
         example: "john.doe@example.com"
     Employment:
+        description: A confirmed employment made possible by EduKolab
         type: object
         properties:
-            employerContact: Email | Phone
-            isVerified:
-
-                type: boolean
-                example: false
-            school:
-
-                type: School
-            subjectsTaught:
-
-                type: SubjectTaught[]
+          id: ID
+          isAccepted:
+              description: Informs if the teacher has accepted the employment
+              type: boolean
+              example: false
+          response: OfferResponse
     Error:
         type: Response
-        description: A request's response error
+        description: Error request response
         properties:
             data: nil
-    Exists:
-        type: Error
+            error:
+                type: boolean
+                example: true
+    ExistsError: Error
     FamilyName:
+        description: A user's family name
         type: string
         example: "Doe"
     File:
+        description: "A file either .jpg .jpeg .png or .pdf"
         type: file
         fileTypes: ['image/jpg', 'image/jpeg', 'image/png', 'application/pdf']
         maxLength: 16777216
@@ -80,37 +90,39 @@ types:
         type: string
         example: "John"
     FullName:
+        description: A user's fullName
         type: object
         properties:
-          familyName:
-            type: FamilyName
-          firstName:
-            type: FirstName
+          familyName: FamilyName
+          firstName: FirstName
     Gender:
+        description: A gender type
         type: string
         enum: ["MALE", "FEMALE"]
         example: "MALE"
     Grade:
+        description: A grade(class) according to the Universal Basic Education system
         type: string
         enum: ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]
         example: "G1"
     Guardian:
-        type: FullName
+        description: "A student's guradian with userType: UG"
+        type: User
         properties:
-            age:
-                type: Age
-            email?: Email
+            age: Age
             gender?: Gender
-            phone: Phone
-            role: UEGRole
+            id: ID
+            role: Role
+            wards: Ward[]
     HighestCompletedEducationLevel:
+        description: Object for teacher's highest completed educational level
         type: object
         properties:
             certificate?: File
             name: HighestCompletedEducationLevelName
     HighestCompletedEducationLevelName:
         type: string
-        description: The name of a UT-user(teacher's) highest completed education level
+        description: The name of a UT(teacher)'s highest completed education level
         enum: ["FSLC", "WASSCE","OND","HND","Undergraduate","Masters", "PHD"]
         example: "Undergraduate"
     ID:
@@ -118,132 +130,76 @@ types:
         type: string
         example: 5eddf0c1c75e4e0017390203
     IsInNeedOfCareerChange:
+        description: Informs if teacher is in need of career change
         type: boolean
-        example: false
+        example: true
+    IsStudentsMixed:
+        description: Informs if students are mixed
+        type: boolean
+        example: true
+    IsTeachersMixed:
+        description: Informs if teachers are mixed
+        type: boolean
+        example: true
+    IsVerified:
+        description: Informs if verified
+        type: boolean
+        example: true
     Job:
+        description: "A job posted by an employer: UEG(Guardian) or UESR(School representative)"
         type: TeacherJobFilters
         properties:
-            studentNumber:
-                type: integer
-                minimum: 1
+            id: ID
             isMixed:
+                description: Informs if students on the job are mixed or not
                 type: boolean
                 example: false
-            applications: JobApplication[]
-    JobApplication:
-        type: TeacherApplicationDetails
-        properties:
-          jobID: ID
-          responses: JobApplicationResponse[]
-    JobApplicationResponse:
-        type: object
-        properties:
-          applicationID: ID
-          ueg:
-              description: This field is not empty if it is a UEG(Guardian) that is responsing to the application
-              type: object
-              properties:
-                  guardian: Guardian
-                  message:
-                      description: Application response custom message
-                      type: string
-                      example: "We need you"
-                  ward:
-                      description: Information about the Ward(student) the parent is employing the teacher for
-                      type: Ward
-                      properties:
-                        familyName: FamilyName
-                        firstName: FirstName
-          uesr:
-              description: This field is not empty if it is a UESR(School Respresentative) that is responsing to the application
-              type: object
-              properties:
-                  address: Address
-                  duties: JobDuty[]
-                  role: UEGRole
-                  school:
-                      description: Information about the school this user is representing
-                      type: School
-                      properties:
-                          schoolPhone: Phone
-                          schoolEmail: Email
-                          schoolWebsite:
-                              description: Link tot the school's website
-                              type: string
-                              pattern: ^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$
-                              example: "nebs.com"
-                          isStudentsMixed:
-                              description: Informs if students at the school are mixed
-                              type: boolean
-                              example: true
-                          isTeachersMixed:
-                              description: Informs if teachers at the school are mixed
-                              type: boolean
-                              example: true
-                          isVerified:
-                              description: Informs if school is verified
-                              type: boolean
-                              example: true
-                  state: State
+
+            details:
+                description: Other job details not covered by the other fields
+                type: string
+                example: This job is very tasking
+            owner: Guardian | SchoolRepresentative
+            studentNumber:
+                description: Number of student to be taught
+                type: integer
+                minimum: 1
+                example: 5
     Offer:
+        description: An offer for employment sent to a teacher from a UG or UESR
         type: object
         properties:
-          responses: OfferResponse[]
-          teacherID: ID
-          ueg:
-              type: object
-              properties:
-                  guardian:
-
-                      type: object
-                      properties:
-                          role: UEGRole
-                  message:
-
-                      type: string
-                      example: "We need you"
-                  ward:
-
-                      type: Ward
-          uesr:
-              type: object
-              properties:
-                  duties:
-
-                      type: JobDuty[]
-                  role:
-
-                      type: UEGRole
-                  school:
-
-                      type: School
-                      properties:
-                          isStudentsMixed:
-                              type: boolean
-                              example: true
-                          isTeachersMixed:
-                              type: boolean
-                              example: true
-                          isVerified:
-                              type: boolean
-                              example: true
+          applicationID?: ID
+          duties: Subject[] | Ward[]
+          id: ID
+          message:
+            description: Custom message
+            type: string
+            example: "We need you"
+          onwer: Guardian | SchoolRepresentative
+          teacher: Teacher
     OfferResponse:
-        type: TeacherApplicationDetails
+        description: "Teacher's response to an offer"
+        type: object
         properties:
-            email: Email
-            familyName: FamilyName
-            firstName: FirstName
+            id: ID
+            message:
+                description: Custom message
+                type: string
+                example: "I'm free to start today"
             offerID: ID
-            phone: Phone
+            owner: Teacher
     NotFound:
-        description: "A request's response error for when something isn't found"
+        description: "Error request response for NotFound"
         type: Error
     Password:
+        description: "A password must have at least 1 uppercase and lowercase letter and a number"
         type: string
         pattern: ^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$
         minLength: 6
         example: "Fiber1"
     Phone:
+        description: A Nigerian phone number
         type: string
         pattern: ^[234]\d{12}$
         example: "2348056437809"
@@ -260,146 +216,200 @@ types:
             message:
                 description: A request's response message
                 type: string
-    UEGRole:
+    Role:
         type: string
-        description: "A UEG user's(Guardian's) role to a student"
+        description: "A UEG(Guardian's) role to a student or UESR(School Representative)'s role at a school"
+        enum: ["Parent", "Relation", "Family Friend", "Principal", "Vice-Principal", "HeadMaster", "HeadMistress", "HeadTeacher"]
         example: "Parent"
     School:
         description: A school
         type: object
         properties:
+            id: ID
+            isStudentsMixed: IsStudentsMixed
+            isTeachersMixed: IsTeachersMixed
+            isVerified: IsVerified
             schoolAddress: Address
+            schoolEmail: Email
             schoolName: SchoolName
+            schoolPhone: Phone
             schoolState: State
-    JobDuty:
-        type: object
-        properties:
-            gradeList:
-
-                type: Grade[]
-            isStudentsMixed:
-
-                type: boolean
-                example: false
-            subjectName:
-
-                type: Subject
-            subjectStudentDisabilities:
-
-                type: Disability[]
-            subjectStudentNumber:
-
-                type: integer
-                example: 50
-            subjectTeacher:
-
+            schoolWebsite:
+                description: Link tot the school's website
                 type: string
-                example: "Ms. Jane Doe"
+                pattern: ^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$
+                example: "nebs.com"
+
+            subjects: Subject
     SchoolName:
         description: A school's name
         type: string
         example: "New Estate Baptist School"
+    SchoolRepresentative:
+        description: A school's representative
+        type: User
+        properties:
+          address: Address
+          id: ID
+          role: Role
+          school: School[]
+          state: State
     State:
+        description: A Nigerian state
         type: string
         enum: ["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"]
         example: "Lagos"
     Subject:
+        description: Information about the duties of a job by a school
+        type: object
+        properties:
+            gradeList: Grade[]
+            id: ID
+            isStudentsMixed: IsStudentsMixed
+            school: ID
+            subjectName: SubjectName
+            subjectStudentDisabilities: Disability[]
+            subjectStudentNumber:
+                description: Number of students to be taught
+                type: integer
+                example: 50
+            subjectTeacher:
+                description: An already existing teacher for the subject
+                type: string
+                example: "Ms. Jane Doe"
+    SubjectName:
         type: string
         description: A subject either in primary or secondary curriculum
         example: "Physics"
     SubjectTaught:
+        description: Object for a subject taught by a teacher and gradeLevels the tecaher teaches the subject to
         type: object
         properties:
-            gradeLevels:
-
-                type: Grade[]
-                example: ["G1", "G2", "G3"]
-            subjectName:
-
-                type: Subject
-    Success: Response
-    TeacherApplicationDetails:
-        type: object
+            gradeLevels: Grade[]
+            subjectName: SubjectName
+    Success:
+        description: Success request Response
+        type: Response
+    Teacher:
+        description: Teacher details sent during a job application
+        type: [User, TeacherJobFilters]
         properties:
-            teacherAge:
-
-                type: Age
-            teacherDisabilitiesExperiencedWith:
-
-                type: Disability[]
-            teacherGender:
-
-                type: Gender
-            teacherHighestCompletedEducationLevelName:
-
-                type: HighestCompletedEducationLevelName
-            teacherIsEmployed:
-
-                type: boolean
-                example: true
-            teacherResume:
-
-                type: File
-            teacherSubjectTaught:
-
-                type: SubjectTaught
+            id: ID
+            teacherResume: File
     TeacherJobFilters:
         description: Filters applied in fetching jobs for teachers
         type: object
         properties:
-            teacherAge?: Age
-            teacherCareerInterest: CareerInterest
+            teacherAge: Age
+            teacherCareerInterest?: CareerInterest
+            teacherDisabilitiesExperiencedWith?: Disability[]
             teacherGender?: Gender
             teacherHighestCompletedEducationLevelName: HighestCompletedEducationLevelName
-            teacherIsEmployed:
+            teacherIsEmployed?:
                 description: Informs if teacher is currently employed
                 type: boolean
                 example: false
             teacherIsInNeedOfCareerChange: IsInNeedOfCareerChange
-            teacherSubjectTaught?: SubjectTaught
+            teacherStudentCapacity?:
+                description: Number of students teacher can manage
+                type: integer
+                example: 50
+            teacherSubjectsTaught?: SubjectTaught[]
     User:
+        description: A user object showing with the required fields
         type: FullName
         properties:
-            email:
-
-                type: Email
-            phone:
-
-                type: Phone
-            userType:
-
-                type: UserType
+            email: Email
+            phone: Phone
+            userType: UserType
     UserType:
+        description: User Types on EduKolab
         type: string
-        enum: ["UT","UEG","UEGW","UESR","UPCB","UPTB","UPCTB"]
+        enum: ["UT","UEG","UEGW","UESR"]
         example: "UT"
     Ward:
-        type: object
+        description: A UG(Guardian)'s ward(child)
+        type: FullName
         properties:
-            age:
-
-                type: Age
-            disabilities:
-
-                type: Disability[]
-            gender:
-
-                type: Gender
-            gradeLevel:
-
-                type: Grade
-            subjectList:
-
-                type: Subject[]
+            age: Age
+            disabilities: Disability[]
+            gender: Gender
+            gradeLevel: Grade
+            id: ID
+            isVerified:
+                description: Informs if this ward has been confirmed
+                type: boolean
+                example: true
+            school: School
+            subjectList: SubjectName[]
+            teachers: User[]
+            userType: UserType
 /application:
     description: Job applications
+    delete:
+        description: Delete all job applications
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Applications deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Application[]
+                            message:
+                                example: "Applications deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No applications found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No applications found"
+    get:
+        description: Get all job applications
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Job applications fetched successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Application[]
+                            message:
+                                example: "Job applications fetched successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No application found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No application found"
     post:
         description: Create a job application
         securedBy:
         - Bearer
         body:
-            application/json:
-                type: JobApplication
+            application/json: Application
         responses:
             201:
                 description: |
@@ -408,21 +418,20 @@ types:
                     application/json:
                         type: Success
                         properties:
-                            data: JobApplication
+                            data: Application
                             message:
                                 example: "Application created successfully"
             400:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             409:
                 description: |
-                        Application already exists
+                    Application already exists
                 body:
                     application/json:
-                        type: Exists
+                        type: ExistsError
                         properties:
                             message:
                                 example: "Application already exists"
@@ -435,57 +444,100 @@ types:
                         properties:
                             message:
                                 example: "Job not found"
-    put:
-        description: Update a job application
-        securedBy:
-        - Bearer
-        body:
-            application/json:
-                type: JobApplication
-                properties:
-                    isConfirmedByEmployer:
 
-                        type: boolean
-                        example: false
-                    isConfirmedByTeacher:
-
-                        type: boolean
-                        example: false
-        responses:
-            200:
-                description: |
-                    Application updated successfully
-                body:
-                    application/json:
-                        type: Success
-                        properties:
-                            data: JobApplication
-                            message:
-                                example: "Application updated successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json:
-                        type: FieldError
-            404:
-                description: |
-                    Application not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Application not found"
-            424:
-                description: |
-                    Job not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Job not found"
+    /{applicationID}:
+        description: A specific job application
+        uriParameters:
+            applicationID: ID
+        delete:
+            description: Delete a specific job application
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Application deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Application
+                                message:
+                                    example: "Application deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Application not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Application not found"
+        get:
+            description: Get a specific job application
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Job application fetched successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Application
+                                message:
+                                    example: "Job application fetched successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Application not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Application not found"
+        put:
+            description: Update a specific job application
+            securedBy:
+            - Bearer
+            body:
+                application/json: Application
+            responses:
+                200:
+                    description: |
+                        Application updated successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Application
+                                message:
+                                    example: "Application updated successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Application not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Application not found"
 /auth:
     description: Authentication
     post:
@@ -494,12 +546,8 @@ types:
             application/json:
                 type: object
                 properties:
-                    email:
-
-                        type: Email
-                    password:
-
-                        type: Password
+                    email: Email
+                    password: Password
         responses:
             200:
                 description: |
@@ -515,8 +563,7 @@ types:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             404:
                 description: |
                     User not found
@@ -526,14 +573,239 @@ types:
                         properties:
                             message:
                                 example: "User not found"
+/employment:
+    description: All employments
+    delete:
+        description: Delete all employments
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Employments deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Employment[]
+                            message:
+                                example: "Employments deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No Employment found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No Employment found"
+    get:
+        description: Get all employments
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Employments fetched successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Employment[]
+                            message:
+                                example: "Employments fetched successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No employment found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No employment found"
+    post:
+        description: Create an employment
+        securedBy:
+        - Bearer
+        body:
+            application/json: Employment
+        responses:
+            201:
+                description: |
+                    Employment created successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Employment
+                            message:
+                                example: "Employment created successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            409:
+                description: |
+                    Employment already exists
+                body:
+                    application/json:
+                        type: ExistsError
+                        properties:
+                            message:
+                                example: "Employment already exists"
+            404:
+                description: |
+                    Response not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Response not found"
+
+    /{employmentID}:
+        description: A specific employment
+        uriParameters:
+            employmentID: ID
+        delete:
+            description: Delete a specific employment
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Employment deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Employment
+                                message:
+                                    example: "Employment deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Employment not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Employment not found"
+
+
+        get:
+            description: Get a specific employment
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Employment fetched successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Employment
+                                message:
+                                    example: "Employment fetched successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Employment not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Employment not found"
+        put:
+            description: Update a specific employment
+            securedBy:
+            - Bearer
+            body:
+                application/json: Employment
+            responses:
+                200:
+                    description: |
+                        Employment updated successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Employment
+                                message:
+                                    example: "Employment updated successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Employment not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Employment not found"
 /job:
     description: All jobs
+    delete:
+        description: Delete all jobs
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Jobs deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Job[]
+                            message:
+                                example: "Jobs deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No jobs found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No jobs found"
     get:
         description: Get all jobs
         securedBy:
         - Bearer
         queryParameters:
-            teacherJobFilters: TeacherJobFilters
+            teacherJobFilters?: TeacherJobFilters
         responses:
             200:
                 description: |
@@ -549,29 +821,176 @@ types:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             404:
                 description: |
-                    Job not found
+                    No jobs found
                 body:
                     application/json:
                         type: NotFound
                         properties:
                             message:
-                                example: "Job not found"
+                                example: "No jobs found"
+
+    post:
+        description: Create a job
+        securedBy:
+        - Bearer
+        body:
+            application/json: Job
+        responses:
+            201:
+                description: |
+                    Job created successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Job
+                            message:
+                                example: "Job created successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            409:
+                description: |
+                    Job already exists
+                body:
+                    application/json:
+                        type: ExistsError
+                        properties:
+                            message:
+                                example: "Job already exists"
     /{jobID}:
         description: A specific job
         uriParameters:
             jobID: ID
+        delete:
+            description: Delete a specific job
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Job deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Job
+                                message:
+                                    example: "Job deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Job not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Job not found"
+        get:
+            description: Get a specific job
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Job fetched successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Job
+                                message:
+                                    example: "Job fetched successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Job not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Job not found"
+        put:
+            description: Update a specific job
+            securedBy:
+            - Bearer
+            body:
+                application/json: Job
+            responses:
+                200:
+                    description: |
+                        Job updated successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Job
+                                message:
+                                    example: "Job updated successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Job not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Job not found"
 /offer:
     description: All offers
+    delete:
+        description: Delete all offers
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Offers deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Offer[]
+                            message:
+                                example: "Offers deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No offers found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No offers found"
     get:
         description: Get all offers
         securedBy:
         - Bearer
-        queryParameters:
-            teacherID: ID
         responses:
             200:
                 description: |
@@ -587,8 +1006,7 @@ types:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             404:
                 description: |
                     No offer found
@@ -598,10 +1016,70 @@ types:
                         properties:
                             message:
                                 example: "No offer found"
+    post:
+        description: Create an offer
+        securedBy:
+        - Bearer
+        body:
+            application/json: Offer
+        responses:
+            201:
+                description: |
+                    Offer created successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: Offer
+                            message:
+                                example: "Offer created successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            409:
+                description: |
+                    Offer already exists
+                body:
+                    application/json:
+                        type: ExistsError
+                        properties:
+                            message:
+                                example: "Offer already exists"
     /{offerID}:
         description: A specific offer
         uriParameters:
             offerID: ID
+        delete:
+            description: Delete a specific offer
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Offer deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: Offer
+                                message:
+                                    example: "Offer deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Offer not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Offer not found"
         get:
             description: Get a specific offer
             securedBy:
@@ -621,8 +1099,7 @@ types:
                     description: |
                         Missen or incorrect field
                     body:
-                        application/json:
-                            type: FieldError
+                        application/json: FieldError
                 404:
                     description: |
                         Offer not found
@@ -637,17 +1114,7 @@ types:
             securedBy:
             - Bearer
             body:
-                application/json:
-                    type: Offer
-                    properties:
-                        isConfirmedByEmployer:
-
-                            type: boolean
-                            example: false
-                        isConfirmedByTeacher:
-
-                            type: boolean
-                            example: false
+                application/json: Offer
             responses:
                 200:
                     description: |
@@ -663,8 +1130,7 @@ types:
                     description: |
                         Missen or incorrect field
                     body:
-                        application/json:
-                            type: FieldError
+                        application/json: FieldError
                 404:
                     description: |
                         Offer not found
@@ -675,14 +1141,40 @@ types:
                                 message:
                                     example: "Offer not found"
 /response:
-    description: All responses
-    get:
-        description: Get all responses for a particular job application or job offer
+    description: All offer responses
+    delete:
+        description: Delete all offer responses
         securedBy:
         - Bearer
-        queryParameters:
-            applicationID?: ID
-            offerID?: ID
+        responses:
+            200:
+                description: |
+                    Responses deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: OfferResponse[]
+                            message:
+                                example: "Responses deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No responses found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No responses found"
+    get:
+        description: Get all offer responses
+        securedBy:
+        - Bearer
         responses:
             200:
                 description: |
@@ -691,58 +1183,29 @@ types:
                     application/json:
                         type: Success
                         properties:
-                            data: JobApplicationResponse[] | OfferResponse[]
+                            data: OfferResponse[]
                             message:
                                 example: "Responses fetched successfully"
             400:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             404:
                 description: |
-                    Responses not found
+                    No responses found
                 body:
                     application/json:
                         type: NotFound
                         properties:
                             message:
-                                example: "Responses not found"
-            424:
-                description: |
-                    Application not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Application not found"
-            444:
-                description: |
-                    Job not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Job not found"
-            464:
-                description: |
-                    Offer not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Offer not found"
+                                example: "No responses found"
     post:
-        description: Create a response
+        description: Create an offer response
         securedBy:
         - Bearer
         body:
-            application/json:
-                type: JobApplicationResponse | OfferResponse
+            application/json: OfferResponse
         responses:
             201:
                 description: |
@@ -751,34 +1214,24 @@ types:
                     application/json:
                         type: Success
                         properties:
-                            data: JobApplicationResponse | OfferResponse
+                            data: OfferResponse
                             message:
                                 example: "Response created successfully"
             400:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             409:
                 description: |
                         Response already exists
                 body:
                     application/json:
-                        type: Exists
+                        type: ExistsError
                         properties:
                             message:
                                 example: "Response already exists"
             404:
-                description: |
-                    Job not found
-                body:
-                    application/json:
-                        type: NotFound
-                        properties:
-                            message:
-                                example: "Job not found"
-            424:
                 description: |
                     Offer not found
                 body:
@@ -788,8 +1241,161 @@ types:
                             message:
                                 example: "Offer not found"
 
+
+    /{responseID}:
+        description: A specific offer response
+        uriParameters:
+            responseID: ID
+        delete:
+            description: Delete a specific offer response
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Response deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: OfferResponse
+                                message:
+                                    example: "Response deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Response not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Response not found"
+        get:
+            description: Get a specific offer response
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        Response fetched successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: OfferResponse
+                                message:
+                                    example: "Response fetched successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Response not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Response not found"
+        put:
+            description: Update a specific offer response
+            securedBy:
+            - Bearer
+            body:
+                application/json: OfferResponse
+            responses:
+                200:
+                    description: |
+                        Response updated successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: OfferResponse
+                                message:
+                                    example: "Response updated successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        Response not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "Response not found"
+
 /user:
     description: All users
+    delete:
+        description: Delete all users
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Users deleted successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: User[]
+                            message:
+                                example: "Users deleted successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No users found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No users found"
+    get:
+        description: Get all users
+        securedBy:
+        - Bearer
+        responses:
+            200:
+                description: |
+                    Users fetched successfully
+                body:
+                    application/json:
+                        type: Success
+                        properties:
+                            data: User[]
+                            message:
+                                example: "Users fetched successfully"
+            400:
+                description: |
+                    Missen or incorrect field
+                body:
+                    application/json: FieldError
+            404:
+                description: |
+                    No users found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "No users found"
     post:
         description: Create a user
         body:
@@ -815,14 +1421,13 @@ types:
                 description: |
                     Missen or incorrect field
                 body:
-                    application/json:
-                        type: FieldError
+                    application/json: FieldError
             409:
                 description: |
                         User already exists
                 body:
                     application/json:
-                        type: Exists
+                        type: ExistsError
                         properties:
                             message:
                                 example: "User already exists"
@@ -830,8 +1435,66 @@ types:
         description: A specific user
         uriParameters:
             userID: ID
+        delete:
+            description: Delete a specific user
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        User deleted successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: User
+                                message:
+                                    example: "User deleted successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        User not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "User not found"
+        get:
+            description: Get a specific user
+            securedBy:
+            - Bearer
+            responses:
+                200:
+                    description: |
+                        User fetched successfully
+                    body:
+                        application/json:
+                            type: Success
+                            properties:
+                                data: User
+                                message:
+                                    example: "User fetched successfully"
+                400:
+                    description: |
+                        Missen or incorrect field
+                    body:
+                        application/json: FieldError
+                404:
+                    description: |
+                        User not found
+                    body:
+                        application/json:
+                            type: NotFound
+                            properties:
+                                message:
+                                    example: "User not found"
         put:
-            description: Update a user
+            description: Update a specific user
             securedBy:
             - Bearer
             body:
@@ -842,13 +1505,24 @@ types:
                         age?: Age
                         careerInterests?: CareerInterest[]
                         currentEmployments?: CurrentEmployments
+                        disabilities?: Disability[]
                         disabilitiesExperiencedWith?: Disability[]
                         gender?: Gender
+                        gradeLevel?: Grade
                         highestCompletedEducationLevel?: HighestCompletedEducationLevel
                         isEmployed?: boolean
                         isInNeedOfCareerChange?: IsInNeedOfCareerChange
+                        isVerified:
+                            description: Informs if this ward has been confirmed
+                            type: boolean
+                            example: true
                         resume?: File
+                        role?: Role
+                        schools?: School[]
                         state?: State
+                        subjectList?: SubjectName[]
+                        teachers?: Teacher[]
+                        wards?: Ward[]
             responses:
                 200:
                     description: |
@@ -864,8 +1538,7 @@ types:
                     description: |
                         Missen or incorrect field
                     body:
-                        application/json:
-                            type: FieldError
+                        application/json: FieldError
                 404:
                     description: |
                         User not found
@@ -875,10 +1548,11 @@ types:
                             properties:
                                 message:
                                     example: "User not found"
-
 #TODO: Routes
 # 1. Confirm teacher
-# 1. Confirm school owners
 # 2. Confim HighestCompletedEducationLevel
 # 3. Consider adding years of experience to teacher model
-# 4. Add enum for UEGRole-type
+# 4. Add enum for Role-type
+# 5. Confirm school owners
+# 6. Confirm guardian
+# 7. Confirm UESRs
