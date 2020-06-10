@@ -52,7 +52,7 @@ if (!isProduction) {
 require('./src/config/passport');
 
 // DB connection
-mongoose.connect(DB_URL, { useNewUrlParser: true });
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.set('debug', true);
 

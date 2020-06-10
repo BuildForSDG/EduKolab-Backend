@@ -15,15 +15,19 @@ module.exports = (req, res) => {
   }
 
   return Users.findOne({ email, isDeleted: false })
-    .then((user) => (user && user.validatePassword(password)
-      ? res.status(200).send({
-        data: user.toAuthJSON(),
-        message: 'login successful',
-        error: false
-      })
-      : res.status(404).send({
-        data: null,
-        message: 'email or password is incorrect',
-        error: true
-      })));
+    .then((user) => {
+      const { id, token } = user.toAuthJSON();
+
+      return (user && user.validatePassword(password)
+        ? res.status(200).send({
+          data: { id, token },
+          message: 'User authenticated successfully',
+          error: false
+        })
+        : res.status(401).send({
+          data: null,
+          message: 'email or password is incorrect',
+          error: true
+        }));
+    });
 };

@@ -11,7 +11,7 @@
     "test": "__tests__"
   },
   "scripts": {
-    "api:build": "api-console build -t \"RAML 1.0\" api/api.raml && rm -R api/build && mv build api/build",
+    "api:build": "cd api && api-console build -t \"RAML 1.0\" api.raml && cd ../",
     "preapi:serve": "start chrome http://127.0.0.1:8000",
     "api:serve": "api-console serve api/build",
     "api:start": "npm run api:build && npm run api:serve",
