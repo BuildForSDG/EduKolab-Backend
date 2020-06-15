@@ -155,17 +155,15 @@ types:
         description: "A job posted by an employer: UEG(Guardian) or UESR(School representative)"
         type: TeacherJobFilters
         properties:
-            id: ID
             isMixed:
                 description: Informs if students on the job are mixed or not
                 type: boolean
                 example: false
-
             details:
                 description: Other job details not covered by the other fields
                 type: string
                 example: This job is very tasking
-            owner: Guardian | SchoolRepresentative
+            owner: ID
             studentNumber:
                 description: Number of student to be taught
                 type: integer
@@ -372,11 +370,6 @@ types:
                             data: Application[]
                             message:
                                 example: "Applications deleted successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No applications found
@@ -386,6 +379,11 @@ types:
                         properties:
                             message:
                                 example: "No applications found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     get:
         description: Get all job applications
         securedBy:
@@ -401,11 +399,6 @@ types:
                             data: Application[]
                             message:
                                 example: "Job applications fetched successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No application found
@@ -415,6 +408,11 @@ types:
                         properties:
                             message:
                                 example: "No application found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     post:
         description: Create a job application
         securedBy:
@@ -455,7 +453,11 @@ types:
                         properties:
                             message:
                                 example: "Job not found"
-
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     /{applicationID}:
         description: A specific job application
         uriParameters:
@@ -605,11 +607,6 @@ types:
                             data: Employment[]
                             message:
                                 example: "Employments deleted successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No Employment found
@@ -619,6 +616,11 @@ types:
                         properties:
                             message:
                                 example: "No Employment found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     get:
         description: Get all employments
         securedBy:
@@ -634,11 +636,6 @@ types:
                             data: Employment[]
                             message:
                                 example: "Employments fetched successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No employment found
@@ -648,6 +645,11 @@ types:
                         properties:
                             message:
                                 example: "No employment found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     post:
         description: Create an employment
         securedBy:
@@ -688,7 +690,11 @@ types:
                         properties:
                             message:
                                 example: "Response not found"
-
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     /{employmentID}:
         description: A specific employment
         uriParameters:
@@ -708,11 +714,6 @@ types:
                                 data: Employment
                                 message:
                                     example: "Employment deleted successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Employment not found
@@ -722,7 +723,11 @@ types:
                             properties:
                                 message:
                                     example: "Employment not found"
-
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
 
         get:
             description: Get a specific employment
@@ -739,11 +744,6 @@ types:
                                 data: Employment
                                 message:
                                     example: "Employment fetched successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Employment not found
@@ -753,6 +753,11 @@ types:
                             properties:
                                 message:
                                     example: "Employment not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         put:
             description: Update a specific employment
             securedBy:
@@ -784,6 +789,11 @@ types:
                             properties:
                                 message:
                                     example: "Employment not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
 /job:
     description: All jobs
     delete:
@@ -801,11 +811,6 @@ types:
                             data: Job[]
                             message:
                                 example: "Jobs deleted successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No jobs found
@@ -815,6 +820,11 @@ types:
                         properties:
                             message:
                                 example: "No jobs found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     get:
         description: Get all jobs
         securedBy:
@@ -832,11 +842,6 @@ types:
                             data: Job[]
                             message:
                                 example: "Jobs fetched successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No jobs found
@@ -846,7 +851,11 @@ types:
                         properties:
                             message:
                                 example: "No jobs found"
-
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     post:
         description: Create a job
         securedBy:
@@ -869,6 +878,15 @@ types:
                     Missen or incorrect field
                 body:
                     application/json: FieldError
+            404:
+                description: |
+                    Owner not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Owner not found"
             409:
                 description: |
                     Job already exists
@@ -878,6 +896,11 @@ types:
                         properties:
                             message:
                                 example: "Job already exists"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     /{jobID}:
         description: A specific job
         uriParameters:
@@ -897,11 +920,6 @@ types:
                                 data: Job
                                 message:
                                     example: "Job deleted successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Job not found
@@ -911,6 +929,11 @@ types:
                             properties:
                                 message:
                                     example: "Job not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         get:
             description: Get a specific job
             securedBy:
@@ -926,11 +949,6 @@ types:
                                 data: Job
                                 message:
                                     example: "Job fetched successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Job not found
@@ -940,6 +958,11 @@ types:
                             properties:
                                 message:
                                     example: "Job not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         put:
             description: Update a specific job
             securedBy:
@@ -971,6 +994,11 @@ types:
                             properties:
                                 message:
                                     example: "Job not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
 /offer:
     description: All offers
     delete:
@@ -988,11 +1016,6 @@ types:
                             data: Offer[]
                             message:
                                 example: "Offers deleted successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No offers found
@@ -1002,6 +1025,11 @@ types:
                         properties:
                             message:
                                 example: "No offers found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     get:
         description: Get all offers
         securedBy:
@@ -1017,11 +1045,6 @@ types:
                             data: Offer[]
                             message:
                                 example: "Offers fetched successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No offer found
@@ -1031,6 +1054,11 @@ types:
                         properties:
                             message:
                                 example: "No offer found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     post:
         description: Create an offer
         securedBy:
@@ -1062,6 +1090,11 @@ types:
                         properties:
                             message:
                                 example: "Offer already exists"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     /{offerID}:
         description: A specific offer
         uriParameters:
@@ -1081,11 +1114,6 @@ types:
                                 data: Offer
                                 message:
                                     example: "Offer deleted successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Offer not found
@@ -1095,6 +1123,11 @@ types:
                             properties:
                                 message:
                                     example: "Offer not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         get:
             description: Get a specific offer
             securedBy:
@@ -1110,11 +1143,6 @@ types:
                                 data: Offer
                                 message:
                                     example: "Offer fetched successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Offer not found
@@ -1124,6 +1152,11 @@ types:
                             properties:
                                 message:
                                     example: "Offer not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         put:
             description: Update a specific offer
             securedBy:
@@ -1155,6 +1188,11 @@ types:
                             properties:
                                 message:
                                     example: "Offer not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
 /response:
     description: All offer responses
     delete:
@@ -1172,11 +1210,6 @@ types:
                             data: OfferResponse[]
                             message:
                                 example: "Responses deleted successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No responses found
@@ -1186,6 +1219,11 @@ types:
                         properties:
                             message:
                                 example: "No responses found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     get:
         description: Get all offer responses
         securedBy:
@@ -1201,11 +1239,6 @@ types:
                             data: OfferResponse[]
                             message:
                                 example: "Responses fetched successfully"
-            400:
-                description: |
-                    Missen or incorrect field
-                body:
-                    application/json: FieldError
             404:
                 description: |
                     No responses found
@@ -1215,6 +1248,11 @@ types:
                         properties:
                             message:
                                 example: "No responses found"
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     post:
         description: Create an offer response
         securedBy:
@@ -1255,8 +1293,11 @@ types:
                         properties:
                             message:
                                 example: "Offer not found"
-
-
+            500:
+                description: |
+                        Internal Server Error
+                body:
+                    application/json: Error
     /{responseID}:
         description: A specific offer response
         uriParameters:
@@ -1276,11 +1317,6 @@ types:
                                 data: OfferResponse
                                 message:
                                     example: "Response deleted successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Response not found
@@ -1290,6 +1326,12 @@ types:
                             properties:
                                 message:
                                     example: "Response not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
+
         get:
             description: Get a specific offer response
             securedBy:
@@ -1305,11 +1347,6 @@ types:
                                 data: OfferResponse
                                 message:
                                     example: "Response fetched successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Response not found
@@ -1319,6 +1356,12 @@ types:
                             properties:
                                 message:
                                     example: "Response not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
+
         put:
             description: Update a specific offer response
             securedBy:
@@ -1350,6 +1393,11 @@ types:
                             properties:
                                 message:
                                     example: "Response not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
 
 /user:
     description: All users
@@ -1568,6 +1616,13 @@ types:
                             properties:
                                 message:
                                     example: "User not found"
+
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
+
 #TODO: Routes
 # 1. Confirm teacher
 # 2. Confim HighestCompletedEducationLevel

@@ -8,13 +8,13 @@ const get = require('./get');
 const del = require('./del');
 
 // Auth routes
-router.post('/', auth.optional, post);
+router.post('/', auth.required, post);
 router.get('/', auth.required, get);
 router.delete('/', auth.required, del);
 
-router.get('/:userID', auth.required, require('./userID/get'));
-router.delete('/:userID', auth.required, require('./userID/del'));
-router.put('/:userID', auth.required, require('./userID/put'));
+router.get('/:jobID', auth.required, require('./jobID/get'));
+router.delete('/:jobID', auth.required, require('./jobID/del'));
+router.put('/:jobID', auth.required, require('./jobID/put'));
 
 // Export Route
 module.exports = router;

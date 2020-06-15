@@ -12,9 +12,9 @@ router.post('/', auth.optional, post);
 router.get('/', auth.required, get);
 router.delete('/', auth.required, del);
 
-router.get('/:userID', auth.required, require('./userID/get'));
-router.delete('/:userID', auth.required, require('./userID/del'));
-router.put('/:userID', auth.required, require('./userID/put'));
+router.get('/:userID', require('./userID/get'));
+router.delete('/:userID', require('./userID/del'));
+router.put('/:userID', require('./userID/put'));
 
 // Export Route
 module.exports = router;
