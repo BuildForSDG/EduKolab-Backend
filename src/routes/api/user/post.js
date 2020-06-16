@@ -80,9 +80,9 @@ module.exports = (req, res) => {
   Users.findOne({ email, isDeleted: false })
     .then((found) => {
       if (found) {
-        return res.status(401).send({
+        return res.status(409).send({
           data: null,
-          message: 'a user with this email already exists',
+          message: 'User already exists',
           error: true
         });
       }
@@ -95,9 +95,9 @@ module.exports = (req, res) => {
       // Save user && return response
       return finalUser
         .save()
-        .then(async (data) => res.status(200).send({
-          data: data.toAuthJSON(),
-          message: 'registration successful',
+        .then(async () => res.status(201).send({
+          data: null,
+          message: 'User created successfully',
           error: false
         }))
         .catch((err) => res.status(500).send({

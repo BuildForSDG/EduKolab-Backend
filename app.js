@@ -25,7 +25,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // Initiate our app
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8008;
 
 // Configure our app
 app.use(cors());
@@ -52,7 +52,7 @@ if (!isProduction) {
 require('./src/config/passport');
 
 // DB connection
-mongoose.connect(DB_URL, { useNewUrlParser: true });
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.set('debug', true);
 

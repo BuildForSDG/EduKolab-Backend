@@ -72,6 +72,10 @@ the `\edukolab-api` directory/folder
 
 -   Check the codebase for lint and test errors: `npm run check`
 
+-   Build api from RAML file: `npm run api:build`
+
+-   Serve build from RAML file: `npm run api:serve`
+
 -   Run app in local dev mode: `npm run dev`
 This first runs `npm run check` to check codebase for lint and test errors.
 If any are found, an npm error is thrown and the app exits with an error code
