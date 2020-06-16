@@ -4,8 +4,7 @@ const Users = require('../../../models/Users');
 
 // Module export
 module.exports = async (req, res) => {
-  const { teacherID } = req.query;
-  const teacher = await Users.findById(teacherID);
+  const teacher = await Users.findById(req.query.teacherID);
 
   const {
     age,
