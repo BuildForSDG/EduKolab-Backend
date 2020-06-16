@@ -1,23 +1,23 @@
 // Mongoose model imports
-const Users = require('../../../../models/Users');
+const Jobs = require('../../../../models/Jobs');
 
 // Module export
 module.exports = (req, res) => {
-  const { userID } = req.params;
+  const { jobID } = req.params;
 
-  return Users.findById(userID)
+  return Jobs.findById(jobID)
     .then((data) => {
       if (data === null || (data && data.isDeleted === true)) {
         res.status(404).send({
           data: null,
-          message: 'User not found',
+          message: 'Job not found',
           error: true
         });
       }
-      Users.findByIdAndUpdate(userID, { isDeleted: true }, { upsert: false })
+      Jobs.findByIdAndUpdate(jobID, { isDeleted: true }, { upsert: false })
         .then(() => res.status(200).send({
           data,
-          message: 'User deleted successfully',
+          message: 'Job deleted successfully',
           error: false
         }))
         .catch((err) => res.status(500).send({

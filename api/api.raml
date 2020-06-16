@@ -155,6 +155,10 @@ types:
         description: "A job posted by an employer: UEG(Guardian) or UESR(School representative)"
         type: TeacherJobFilters
         properties:
+            isBlocked:
+                description: Informs if job is blocked
+                type: boolean
+                example: false
             isMixed:
                 description: Informs if students on the job are mixed or not
                 type: boolean
@@ -164,11 +168,10 @@ types:
                 type: string
                 example: This job is very tasking
             owner: ID
-            studentNumber:
-                description: Number of student to be taught
-                type: integer
-                minimum: 1
-                example: 5
+            title:
+                description: Job title
+                type: string
+                example: Lucrative English teacher job
     Offer:
         description: An offer for employment sent to a teacher from a UG or UESR
         type: object
@@ -304,7 +307,6 @@ types:
         type: object
         properties:
             teacherAge: Age
-            teacherCareerInterest?: CareerInterest
             teacherDisabilitiesExperiencedWith?: Disability[]
             teacherGender?: Gender
             teacherHighestCompletedEducationLevelName: HighestCompletedEducationLevelName
@@ -312,12 +314,12 @@ types:
                 description: Informs if teacher is currently employed
                 type: boolean
                 example: false
-            teacherIsInNeedOfCareerChange: IsInNeedOfCareerChange
-            teacherStudentCapacity?:
+            teacherIsInNeedOfCareerChange?: IsInNeedOfCareerChange
+            teacherStudentCapacity:
                 description: Number of students teacher can manage
                 type: integer
                 example: 50
-            teacherSubjectsTaught?: SubjectTaught[]
+            teacherSubjectsTaught: SubjectTaught[]
     Token:
         description: |
             A valid token
@@ -980,11 +982,6 @@ types:
                                 data: Job
                                 message:
                                     example: "Job updated successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Job not found
@@ -1602,11 +1599,6 @@ types:
                                 data: User
                                 message:
                                     example: "User updated successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         User not found

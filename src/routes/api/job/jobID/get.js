@@ -1,22 +1,22 @@
 // Mongoose model imports
-const Users = require('../../../../models/Users');
+const Jobs = require('../../../../models/Jobs');
 
 // Module export
 module.exports = (req, res) => {
-  const { userID } = req.params;
+  const { jobID } = req.params;
 
-  return Users.findById(userID)
+  return Jobs.findById(jobID)
     .then((data) => {
       if (data === null || (data && data.isDeleted === true)) {
         res.status(404).send({
           data: null,
-          message: 'User not found',
+          message: 'Job not found',
           error: true
         });
       }
       res.status(200).send({
         data,
-        message: 'User fetched successfully',
+        message: 'Job fetched successfully',
         error: false
       });
     })

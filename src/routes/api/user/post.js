@@ -95,7 +95,7 @@ module.exports = (req, res) => {
       // Save user && return response
       return finalUser
         .save()
-        .then(async () => res.status(200).send({
+        .then(async () => res.status(201).send({
           data: null,
           message: 'User created successfully',
           error: false

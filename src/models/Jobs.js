@@ -8,8 +8,9 @@ const { Schema } = mongoose;
 // Mongoose Job Schema
 const JobsSchema = new Schema(
   {
-    details: String,
+    details: { required: true, type: String },
     isBlocked: {
+      required: true,
       default: false,
       type: Boolean
     },
@@ -17,49 +18,27 @@ const JobsSchema = new Schema(
       default: false,
       type: Boolean
     },
-    isMixed: { type: Boolean, default: false },
-    isVerified: {
-      default: false,
-      type: Boolean
+    isMixed: { required: true, type: Boolean, default: false },
+    owner: { required: true, type: String },
+    teacherAge: {
+      required: true, type: Number, min: 18, max: 65
     },
-    owner: String,
-    studentNumber: {
-      type: Number,
-      min: 1
-    },
-    teacherAge: { type: Number, min: 18, max: 65 },
-    teacherCareerInterest: [
-      {
-        schoolNames: [{ type: String }],
-        subjects: [
-          {
-            gradeLevels: [
-              {
-                type: String,
-                enum: ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12']
-              }
-            ],
-            subjectName: { type: String }
-          }
-        ]
-      }
-    ],
     teacherDisabilitiesExperiencedWith: [{ type: String }],
     teacherGender: {
       type: String,
       enum: ['MALE', 'FEMALE']
     },
     teacherHighestCompletedEducationLevelName: {
-      certificate: { type: String },
-      name: {
-        type: String,
-        enum: ['FSLC', 'WASSCE', 'OND', 'HND', 'Undergraduate', 'Masters', 'PHD']
-      }
+      required: true,
+      type: String,
+      enum: ['FSLC', 'WASSCE', 'OND', 'HND', 'Undergraduate', 'Masters', 'PHD']
     },
-    teacherIsEmployed: Boolean,
-    teacherIsInNeedOfCareerChange: Boolean,
+    teacherIsEmployed: { type: Boolean, default: false },
+    teacherIsInNeedOfCareerChange: { type: Boolean, default: false },
     teacherStudentCapacity: {
-      type: Number
+      required: true,
+      type: Number,
+      min: 1
     },
     teacherSubjectsTaught: [
       {
@@ -69,9 +48,11 @@ const JobsSchema = new Schema(
             enum: ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12']
           }
         ],
-        subjectName: { type: String }
+        subjectName: String
       }
-    ]
+    ],
+    title: { required: true, type: String }
+
   },
   {
     timestamps: true
@@ -97,6 +78,7 @@ JobsSchema.methods.toAuthJSON = function d4() {
   return {
     id: this.id,
     owner: this.owner,
+    title: this.title,
     details: this.details
   };
 };
