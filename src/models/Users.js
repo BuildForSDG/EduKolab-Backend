@@ -271,6 +271,7 @@ const UsersSchema = new Schema(
         'Zamfara'
       ]
     },
+    studentCapacity: Number,
     subjectList: [{
       type: String
     }],

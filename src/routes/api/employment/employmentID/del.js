@@ -1,27 +1,23 @@
 // Mongoose model imports
-const Jobs = require('../../../../models/Jobs');
+const Employments = require('../../../../models/Employments');
 
 // Module export
 module.exports = (req, res) => {
-  const { jobID } = req.params;
+  const { employmentID } = req.params;
 
-  return Jobs.findById(jobID)
+  return Employments.findById(employmentID)
     .then((data) => {
       if (data === null || (data && data.isDeleted === true)) {
         res.status(404).send({
           data: null,
-          message: 'Job not found',
+          message: 'Employment not found',
           error: true
         });
       }
-
-      Jobs.findByIdAndUpdate(
-        jobID,
-        { ...req.body }, { new: true }
-      )
-        .then((job) => res.status(200).send({
-          data: job,
-          message: 'Job updated successfully',
+      Employments.findByIdAndUpdate(employmentID, { isDeleted: true }, { upsert: false })
+        .then(() => res.status(200).send({
+          data,
+          message: 'Employment deleted successfully',
           error: false
         }))
         .catch((err) => res.status(500).send({

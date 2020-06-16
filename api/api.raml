@@ -30,7 +30,7 @@ types:
         properties:
           id: ID
           jobID: ID
-          owner: Teacher
+          owner: ID
     CareerInterest:
         description: Schools and subjects a teacher will like to teach at and teach respectively in a new job
         type: object
@@ -66,7 +66,8 @@ types:
               description: Informs if the teacher has accepted the employment
               type: boolean
               example: false
-          response: OfferResponse
+          owner: ID
+          response: ID
     Error:
         type: Response
         description: Error request response
@@ -180,22 +181,23 @@ types:
           duties: Subject[] | Ward[]
           id: ID
           message:
+            required: false
             description: Custom message
             type: string
             example: "We need you"
-          onwer: Guardian | SchoolRepresentative
-          teacher: Teacher
+          onwer: ID
     OfferResponse:
         description: "Teacher's response to an offer"
         type: object
         properties:
             id: ID
             message:
+                required: false
                 description: Custom message
                 type: string
                 example: "I'm free to start today"
             offerID: ID
-            owner: Teacher
+            owner: ID
     NotFound:
         description: "Error request response for NotFound"
         type: Error
@@ -232,7 +234,6 @@ types:
         description: A school
         type: object
         properties:
-            id: ID
             isStudentsMixed: IsStudentsMixed
             isTeachersMixed: IsTeachersMixed
             isVerified: IsVerified
@@ -270,9 +271,8 @@ types:
         type: object
         properties:
             gradeList: Grade[]
-            id: ID
             isStudentsMixed: IsStudentsMixed
-            school: ID
+            school: School
             subjectName: SubjectName
             subjectStudentDisabilities: Disability[]
             subjectStudentNumber:
@@ -455,6 +455,15 @@ types:
                         properties:
                             message:
                                 example: "Job not found"
+            424:
+                description: |
+                    Owner not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Owner not found"
             500:
                 description: |
                         Internal Server Error
@@ -479,11 +488,6 @@ types:
                                 data: Application
                                 message:
                                     example: "Application deleted successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Application not found
@@ -493,6 +497,11 @@ types:
                             properties:
                                 message:
                                     example: "Application not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         get:
             description: Get a specific job application
             securedBy:
@@ -508,11 +517,6 @@ types:
                                 data: Application
                                 message:
                                     example: "Job application fetched successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Application not found
@@ -522,6 +526,11 @@ types:
                             properties:
                                 message:
                                     example: "Application not found"
+                500:
+                    description: |
+                            Internal Server Error
+                    body:
+                        application/json: Error
         put:
             description: Update a specific job application
             securedBy:
@@ -685,6 +694,15 @@ types:
                                 example: "Employment already exists"
             404:
                 description: |
+                    Owner not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Owner not found"
+            424:
+                description: |
                     Response not found
                 body:
                     application/json:
@@ -777,11 +795,6 @@ types:
                                 data: Employment
                                 message:
                                     example: "Employment updated successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Employment not found
@@ -832,7 +845,7 @@ types:
         securedBy:
         - Bearer
         queryParameters:
-            teacherJobFilters?: TeacherJobFilters
+            teacherID: ID
         responses:
             200:
                 description: |
@@ -1078,6 +1091,24 @@ types:
                     Missen or incorrect field
                 body:
                     application/json: FieldError
+            404:
+                description: |
+                    Application not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Application not found"
+            424:
+                description: |
+                    Owner not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Owner not found"
             409:
                 description: |
                     Offer already exists
@@ -1171,11 +1202,6 @@ types:
                                 data: Offer
                                 message:
                                     example: "Offer updated successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Offer not found
@@ -1283,6 +1309,15 @@ types:
                                 example: "Response already exists"
             404:
                 description: |
+                    Owner not found
+                body:
+                    application/json:
+                        type: NotFound
+                        properties:
+                            message:
+                                example: "Owner not found"
+            424:
+                description: |
                     Offer not found
                 body:
                     application/json:
@@ -1376,11 +1411,6 @@ types:
                                 data: OfferResponse
                                 message:
                                     example: "Response updated successfully"
-                400:
-                    description: |
-                        Missen or incorrect field
-                    body:
-                        application/json: FieldError
                 404:
                     description: |
                         Response not found

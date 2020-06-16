@@ -20,7 +20,7 @@ module.exports = (req, res) => {
         { ...req.body }, { new: true }
       )
         .then((user) => res.status(200).send({
-          user,
+          data: user,
           message: 'User updated successfully',
           error: false
         }))

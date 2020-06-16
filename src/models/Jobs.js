@@ -10,7 +10,6 @@ const JobsSchema = new Schema(
   {
     details: { required: true, type: String },
     isBlocked: {
-      required: true,
       default: false,
       type: Boolean
     },
@@ -52,7 +51,6 @@ const JobsSchema = new Schema(
       }
     ],
     title: { required: true, type: String }
-
   },
   {
     timestamps: true

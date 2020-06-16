@@ -1,46 +1,53 @@
 // Mongoose model imports
 const Jobs = require('../../../models/Jobs');
+const Users = require('../../../models/Users');
 
 // Module export
-module.exports = (req, res) => {
-  const filters = req.query;
+module.exports = async (req, res) => {
+  const { teacherID } = req.query;
+  const teacher = await Users.findById(teacherID);
 
   const {
-    teacherAge,
-    teacherDisabilitiesExperiencedWith,
-    teacherGender,
-    teacherHighestCompletedEducationLevelName,
-    teacherIsEmployed,
-    teacherIsInNeedOfCareerChange,
-    teacherStudentCapacity,
-    teacherSubjectsTaught
-  } = filters;
+    age,
+    disabilitiesExperiencedWith,
+    gender,
+    highestCompletedEducationLevel,
+    isEmployed,
+    isInNeedOfCareerChange,
+    studentCapacity,
+    currentEmployments
+  } = teacher;
+
+  const highestCompletedEducationLevelName = highestCompletedEducationLevel
+  && highestCompletedEducationLevel.name;
+
+  const { subjectsTaught } = currentEmployments;
 
   return Jobs.find({ isDeleted: false })
     .then((data) => {
       let jobs = data;
 
-      if (teacherAge) {
-        jobs = jobs.filter((job) => job.teacherAge >= teacherAge);
+      if (age) {
+        jobs = jobs.filter((job) => job.teacherAge >= age);
       }
 
-      if (teacherDisabilitiesExperiencedWith) {
-        jobs = jobs.filter((job) => teacherDisabilitiesExperiencedWith.map(
+      if (disabilitiesExperiencedWith) {
+        jobs = jobs.filter((job) => disabilitiesExperiencedWith.map(
           (val) => (job.teacherDisabilitiesExperiencedWith.includes(val) ? val : null)
             .filter((item) => item !== null)
             .length > 0
         ));
       }
 
-      if (teacherGender) {
-        jobs = jobs.filter((job) => job.teacherGender === teacherGender);
+      if (gender) {
+        jobs = jobs.filter((job) => job.teacherGender === gender);
       }
 
-      if (teacherHighestCompletedEducationLevelName) {
+      if (highestCompletedEducationLevelName) {
         const array = ['FSLC', 'WASSCE', 'OND', 'HND', 'Undergraduate', 'Masters', 'PHD'];
 
         jobs = jobs.map((job) => {
-          const index1 = array.indexOf(teacherHighestCompletedEducationLevelName);
+          const index1 = array.indexOf(highestCompletedEducationLevelName);
           const index2 = array.indexOf(job.teacherHighestCompletedEducationLevelName);
           if (index1 >= index2) {
             return job;
@@ -49,24 +56,24 @@ module.exports = (req, res) => {
         });
       }
 
-      if (teacherIsEmployed) {
-        jobs = jobs.filter((job) => job.teacherIsEmployed === teacherIsEmployed);
+      if (isEmployed) {
+        jobs = jobs.filter((job) => job.teacherIsEmployed === isEmployed);
       }
 
-      if (teacherIsInNeedOfCareerChange) {
+      if (isInNeedOfCareerChange) {
         jobs = jobs.filter(
-          (job) => job.teacherIsInNeedOfCareerChange === teacherIsInNeedOfCareerChange
+          (job) => job.teacherIsInNeedOfCareerChange === isInNeedOfCareerChange
         );
       }
 
-      if (teacherStudentCapacity) {
-        jobs = jobs.filter((job) => teacherStudentCapacity >= job.teacherStudentCapacity);
+      if (studentCapacity) {
+        jobs = jobs.filter((job) => studentCapacity >= job.teacherStudentCapacity);
       }
 
-      if (teacherSubjectsTaught) {
+      if (subjectsTaught) {
         jobs = jobs.filter(
-          (job) => job.teacherSubjectsTaught.subjectName === teacherSubjectsTaught.subjectName
-            && teacherSubjectsTaught.gradeLevels.map(
+          (job) => job.teacherSubjectsTaught.subjectName === subjectsTaught.subjectName
+            && subjectsTaught.gradeLevels.map(
               (val) => (
                 job.teacherSubjectsTaught.gradeLevels.includes(val) ? val : null)
                 .filter((item) => item !== null)
